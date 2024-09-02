@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import default_img from '../assets/default_img.jpg'
 import { useNavigate } from 'react-router-dom';
 import {useCart} from './CartContext'
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { useLocation } from 'react-router-dom';
-import { useAuth } from './AuthContext';
+import { AuthContext } from './AuthContext';
 
 const Home = () => {
 
@@ -17,16 +17,7 @@ const Home = () => {
   const [filtervlue,setFilterValue]=useState('revalant')
   const [sortedproducts,setSortedProducts]=useState([])
   const { email, password } = location.state || {};
-
-
-  // const {loggedIn}= useAuth();
-
-  // useEffect(() => {
-  //   if (!loggedIn) {
-  //     navigate('/');
-  //   }
-  // }, [loggedIn, navigate]);
-
+  const {logged} = useContext(AuthContext)
   
   
   useEffect(() => {
@@ -37,47 +28,55 @@ const Home = () => {
     fetch(url)
       .then((res) => res.json())
       .then((data) => {
-        setProducts(data)
-        setSortedProducts(data)
+        setProducts(data);
+        setSortedProducts(data);
       })
       .catch((err) => console.log(err));
   }, [value]);
 
-  useEffect(()=>{
+  useEffect(() => {
     sortproducts();
-  },[filtervlue,products])
+  }, [filtervlue, products]);
 
-  const sortproducts=()=>{
-    const sorted=[...products]
+  useEffect(() => {
+    if (!logged) {
+      navigate('/');
+    }
+  }, [logged, navigate]);
 
-    if( filtervlue=="LowToHigh"){
-      sorted.sort((a,b)=>a.price-b.price);
-    }
-    else if(filtervlue=="HighToLow"){
-      sorted.sort((a,b)=>b.price-a.price)
-    }
-    else{
-      setSortedProducts(products)
-      return
-    }
-    setSortedProducts(sorted)
-  }
+  const sortproducts = () => {
+    const sorted = [...products];
 
-  const handleImageError = (e) => {
-    e.target.src = default_img; 
+    if (filtervlue === "LowToHigh") {
+      sorted.sort((a, b) => a.price - b.price);
+    } else if (filtervlue === "HighToLow") {
+      sorted.sort((a, b) => b.price - a.price);
+    } else {
+      setSortedProducts(products);
+      return;
+    }
+    setSortedProducts(sorted);
   };
 
-  const handleWishlist=(product)=>{
-    addToWishlist(product)
-    console.log("product added to wishlist")
-  }
+  const handleImageError = (e) => {
+    e.target.src = default_img;
+  };
 
-  const handleCart=(product)=>{
-    addToCart(product)
-    setCount(count+1)
-    amount(product.price)
-    console.log("product added to cart")
-  }
+  const handleWishlist = (product) => {
+    addToWishlist(product);
+    console.log("Product added to wishlist");
+  };
+
+  const handleCart = (product) => {
+    if (logged) {
+      addToCart(product);
+      setCount(count + 1);
+      amount(product.price);
+      console.log("Product added to cart");
+    } else {
+      navigate("/");
+    }
+  };
   return (
     <>
     <div className='header'>

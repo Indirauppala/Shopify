@@ -11,10 +11,14 @@ import ForgotPassword from './Components/ForgotPassword'
 import Contact from './Components/Contact'
 import About from './Components/About'
 
-
+import { CartProvider } from './Components/CartContext'
+import AuthProvider from './Components/AuthContext'
 
 function App() {
   return (
+    <AuthProvider>
+
+      <CartProvider>   
     <BrowserRouter>
       <Routes>
         <Route path='/' element={<Login/>}/>
@@ -28,6 +32,9 @@ function App() {
       </Routes>
     </BrowserRouter>
 
+      </CartProvider>
+    </AuthProvider>
+    
   )
 }
 

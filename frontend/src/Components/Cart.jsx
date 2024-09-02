@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useCart } from './CartContext';
 import { useNavigate } from 'react-router-dom';
-
+import { AuthContext } from './AuthContext';
 const Cart = () => {
     const { cart, removeFromCart, total } = useCart();
     const [showModal, setShowModal] = useState(false);
     const navigate=useNavigate()
-
+    const {logged}=useContext(AuthContext)
+    console.log(logged)
     const handleImageError = (e) => {
         e.target.src = default_img;
     };

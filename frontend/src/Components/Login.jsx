@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from './AuthContext';
+import { AuthContext } from './AuthContext'; // Import AuthContext correctly
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigate=useNavigate();
-  // const {setLoggedIn}=useAuth();
+  const navigate = useNavigate();
+  const { login } = useContext(AuthContext); // Use AuthContext correctly
   const [message, setMessage] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     fetch('http://localhost:3000/api/users', {
       method: 'POST',
       headers: {
@@ -23,12 +23,12 @@ const Login = () => {
     .then((data) => {
       setMessage(data.msg);
       if (data.msg === "Login successful") {
-        // setLoggedIn(true)
-        navigate('/home', { state: { email, password } })
+        login(); // Call login from AuthContext
+        navigate('/home', { state: { email, password } }); // Navigate to home page
       }
     })
     .catch((err) => console.log(err));
-  }
+  };
 
   return (
     <div className="login-wrapper">
